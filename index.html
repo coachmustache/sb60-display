@@ -7,495 +7,274 @@
 
   <style>
     :root{
-      --bg: #f3f3f3;
-      --card: #ffffff;
-      --ink: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-
-      --goodBg: #dcfce7;
-      --goodInk:#14532d;
-
-      --badBg:  #fee2e2;
-      --badInk: #7f1d1d;
-
-      --waitBg: #f3f4f6;
-      --waitInk:#374151;
-
+      --bg:#f3f3f3; --card:#fff; --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb;
+      --goodBg:#dcfce7; --goodInk:#14532d;
+      --badBg:#fee2e2; --badInk:#7f1d1d;
+      --waitBg:#f3f4f6; --waitInk:#374151;
       --accent:#2ecc71;
-
-      --dupBg: #fff7ed;
-      --dupInk: #9a3412;
-      --dupBorder: #fdba74;
-
-      --tbBg: #eef2ff;
-      --tbInk:#312e81;
-      --tbBorder:#c7d2fe;
+      --dupBg:#fff7ed; --dupInk:#9a3412; --dupBorder:#fdba74;
+      --tbBg:#eef2ff; --tbInk:#312e81; --tbBorder:#c7d2fe;
     }
 
-    html, body { margin:0; padding:0; background:var(--bg); font-family: Arial, sans-serif; color:var(--ink); }
+    html,body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--ink)}
 
-    .wrap{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 14px;
-    }
+    .wrap{max-width:1200px;margin:0 auto;padding:14px}
 
-    .header{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom: 12px;
-    }
-
-    .title{
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: .5px;
-    }
-
-    .meta{
-      text-align:right;
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.2;
-    }
+    .header{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .title{font-size:20px;font-weight:900}
+    .meta{font-size:12px;color:var(--muted);text-align:right}
 
     .card{
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
-      overflow: hidden;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:0 10px 24px rgba(0,0,0,.06);
+      overflow:hidden;
     }
 
     .toolbar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      padding: 12px 12px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #ffffff, #fbfbfb);
-      flex-wrap: wrap;
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      padding:12px;border-bottom:1px solid var(--line);
     }
 
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      font-size: 13px;
-      color: var(--muted);
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border-radius:999px;
+      background:#f8fafc;border:1px solid var(--line);
+      font-size:13px;color:var(--muted)
     }
 
     .dot{
-      width:10px; height:10px; border-radius:999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(46,204,113,0.16);
+      width:10px;height:10px;border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 0 4px rgba(46,204,113,.18)
     }
 
-    .search{
-      flex: 1 1 200px;
-      min-width: 200px;
-      display:flex;
-      justify-content:flex-end;
-    }
-
+    .search{margin-left:auto}
     input[type="search"]{
-      width:min(420px, 100%);
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      outline: none;
-      font-size: 14px;
-    }
-    input[type="search"]:focus{
-      border-color: rgba(46,204,113,0.6);
-      box-shadow: 0 0 0 4px rgba(46,204,113,0.18);
+      padding:10px 12px;border-radius:10px;
+      border:1px solid var(--line);font-size:14px
     }
 
-    .table-wrap{
-      width: 100%;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .table-wrap{overflow:auto}
 
     table{
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      min-width: 980px;
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width:980px;
     }
 
+    /* 🔥 HEADER WRAPPING (HEADERS ONLY) */
     thead th{
-      position: sticky;
-      top: 0;
-      background: #ffffff;
-      z-index: 2;
-      text-align: left;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 10px 10px;
-      border-bottom: 1px solid var(--line);
-      white-space: nowrap;
+      position:sticky;top:0;z-index:2;
+      background:#fff;
+      font-size:12px;color:var(--muted);
+      padding:8px 6px;
+      border-bottom:1px solid var(--line);
+      text-align:center;
+
+      white-space:normal;
+      word-break:break-word;
+      line-height:1.1;
     }
 
     tbody td{
-      padding: 10px 10px;
-      border-bottom: 1px solid var(--line);
-      font-size: 14px;
-      vertical-align: top;
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+      white-space:nowrap;
     }
 
-    tbody tr:hover td{
-      background: #fafafa;
-    }
+    tbody tr:hover td{background:#fafafa}
 
-    .col-rank{ width: 56px; }
-    .col-name{ width: 240px; font-weight: 900; }
-    .col-points{ width: 90px; font-weight: 900; }
-    .col-tb{ width: 120px; font-weight: 800; }
+    .col-rank{width:56px}
+    .col-name{width:240px;font-weight:900}
+    .col-points{width:90px;font-weight:900}
+    .col-tb{width:120px;font-weight:800}
 
-    .name-wrap{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap: wrap;
-    }
+    .name-wrap{display:flex;gap:8px;flex-wrap:wrap}
 
     .dup-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--dupInk);
-      background: var(--dupBg);
-      border: 1px solid var(--dupBorder);
+      padding:4px 8px;border-radius:999px;
+      font-size:11px;font-weight:800;
+      color:var(--dupInk);
+      background:var(--dupBg);
+      border:1px solid var(--dupBorder);
     }
 
+    /* ===== Cells ===== */
     .cell{
-      border-radius: 10px;
-      padding: 8px 10px;
       display:inline-block;
-      min-width: 90px;
+      min-width:90px;
+      padding:8px 10px;
+      border-radius:10px;
       text-align:center;
-      font-weight: 800;
-      border: 1px solid rgba(0,0,0,0.06);
-      background: #fff;
+      font-weight:800;
+      border:1px solid rgba(0,0,0,.06);
+      background:#fff;
+      transition:background .25s,color .25s;
     }
-    .good{ background: var(--goodBg); color: var(--goodInk); }
-    .bad{  background: var(--badBg);  color: var(--badInk); }
-    .wait{ background: var(--waitBg); color: var(--waitInk); }
 
-    /* Tiebreak cell */
-    .tb{
-      background: var(--tbBg);
-      color: var(--tbInk);
-      border-color: var(--tbBorder);
+    .good{background:var(--goodBg);color:var(--goodInk)}
+    .bad{background:var(--badBg);color:var(--badInk)}
+    .wait{background:var(--waitBg);color:var(--waitInk)}
+
+    /* ✨ ANIMATION */
+    .reveal{
+      animation:pop .35s ease-out both;
     }
-    .tb.wait{
-      background: var(--waitBg);
-      color: var(--waitInk);
-      border-color: rgba(0,0,0,0.06);
+
+    @keyframes pop{
+      0%{transform:scale(.92);opacity:0}
+      60%{transform:scale(1.04)}
+      100%{transform:scale(1);opacity:1}
     }
+
+    .tb{background:var(--tbBg);color:var(--tbInk);border-color:var(--tbBorder)}
+    .tb.wait{background:var(--waitBg);color:var(--waitInk)}
 
     .footer{
-      padding: 10px 12px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 12px;
-      display:flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      font-size:12px;color:var(--muted);
+      display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap
     }
 
-    @media (max-width: 600px){
-      .header{ flex-direction: column; align-items:flex-start; }
-      .meta{ text-align:left; }
-      table{ min-width: 900px; }
-      .col-name{ width: 200px; }
+    @media(max-width:600px){
+      .header{flex-direction:column}
+      table{min-width:900px}
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="header">
-      <div class="title">SB60 Live Standings</div>
-      <div class="meta">
-        <div id="updated">Updated: —</div>
-        <div id="status">Loading…</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="toolbar">
-        <div class="pill"><span class="dot"></span><span>Auto-updates every 30s</span></div>
-        <div class="pill">Sorted: Points ↓ • Tiebreak Δ ↑ • Name</div>
-        <div class="search">
-          <input id="q" type="search" placeholder="Search name…" />
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead id="thead"></thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-
-      <div class="footer">
-        <div>Green = correct • Red = incorrect • Gray = pending • “Duplicate?” badge = identical picks</div>
-        <div id="counts">—</div>
-      </div>
+<div class="wrap">
+  <div class="header">
+    <div class="title">SB60 Live Standings</div>
+    <div class="meta">
+      <div id="updated">Updated: —</div>
+      <div id="status">Loading…</div>
     </div>
   </div>
 
-  <script>
-    const SHEET_CSV_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvxWm5EeVD-akvWoB9ArtroL8J1nh8USmTiPdepmbp8JNS3HfQvKtOfSEcgumT4mccp95PJBJBlfix/pub?gid=1947708892&single=true&output=csv";
+  <div class="card">
+    <div class="toolbar">
+      <div class="pill"><span class="dot"></span> Auto-updates every 30s</div>
+      <div class="pill">Sorted: Points ↓ • Tiebreak Δ ↑ • Name</div>
+      <div class="search"><input id="q" type="search" placeholder="Search name…" /></div>
+    </div>
 
-    // Sheet layout
-    const RESULTS_ROW_NUMBER = 7; // results live in row 7 (1-based)
+    <div class="table-wrap">
+      <table>
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
 
-    // Columns (0-based indexes)
-    const NAME_COL = 0;            // A
-    const PICKS_START_COL = 1;     // B
-    const PICKS_END_COL = 15;      // P  (B=1 ... P=15)
-    const TIE_GUESS_COL = 16;      // Q
+    <div class="footer">
+      <div>Green = correct • Red = incorrect • Gray = pending</div>
+      <div id="counts">—</div>
+    </div>
+  </div>
+</div>
 
-    // Calculated columns you already have
-    const TIEBREAK_DIFF_COL = 17; // R
-    const POINTS_COL = 18;        // S
-    const DUP_COL = 20;           // U
+<script>
+const SHEET_CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vQvxWm5EeVD-akvWoB9ArtroL8J1nh8USmTiPdepmbp8JNS3HfQvKtOfSEcgumT4mccp95PJBJBlfix/pub?gid=1947708892&single=true&output=csv";
 
-    const REFRESH_MS = 30000;
+const RESULTS_ROW_NUMBER = 7;
+const NAME_COL=0,PICKS_START_COL=1,PICKS_END_COL=15,TIE_GUESS_COL=16;
+const TIEBREAK_DIFF_COL=17,POINTS_COL=18,DUP_COL=20;
+const REFRESH_MS=30000;
 
-    let cachedRows = [];
-    const elUpdated = document.getElementById("updated");
-    const elStatus  = document.getElementById("status");
-    const elCounts  = document.getElementById("counts");
-    const elQ       = document.getElementById("q");
-    const thead     = document.getElementById("thead");
-    const tbody     = document.getElementById("tbody");
+let cachedRows=[], previousState=new Map();
 
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let inQuotes = false;
+const thead=document.getElementById("thead");
+const tbody=document.getElementById("tbody");
+const elQ=document.getElementById("q");
+const elCounts=document.getElementById("counts");
+const elUpdated=document.getElementById("updated");
+const elStatus=document.getElementById("status");
 
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i];
-        const next = text[i + 1];
+const clean=v=>String(v??"").trim();
+const toNum=v=>{const n=Number(clean(v));return Number.isFinite(n)?n:null};
 
-        if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
-        if (ch === '"') { inQuotes = !inQuotes; continue; }
+function parseCSV(t){
+  return t.trim().split("\n").map(r=>r.split(","));
+}
 
-        if (ch === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
-        if ((ch === "\n" || ch === "\r") && !inQuotes) {
-          if (ch === "\r" && next === "\n") i++;
-          row.push(cur);
-          if (row.some(cell => String(cell).trim() !== "")) rows.push(row);
-          row = [];
-          cur = "";
-          continue;
-        }
-        cur += ch;
-      }
-      row.push(cur);
-      if (row.some(cell => String(cell).trim() !== "")) rows.push(row);
+function build(headers,results,rows){
+  const pickCols=[...Array(PICKS_END_COL-PICKS_START_COL+1)].map((_,i)=>i+PICKS_START_COL);
 
-      const maxLen = Math.max(0, ...rows.map(r => r.length));
-      return rows.map(r => r.concat(Array(Math.max(0, maxLen - r.length)).fill("")));
+  const players=rows.filter(r=>clean(r[0])).map(r=>{
+    return{
+      name:clean(r[0]),
+      points:toNum(r[POINTS_COL])??0,
+      tbdiff:toNum(r[TIEBREAK_DIFF_COL])??999999,
+      dup:clean(r[DUP_COL]).toLowerCase()==="true",
+      picks:pickCols.map(c=>{
+        const pick=clean(r[c]);
+        const ans=clean(results[c]);
+        return{pick,ans,pending:!ans,correct:pick&&pick.toLowerCase()===ans.toLowerCase()}
+      })
     }
+  }).sort((a,b)=>b.points-a.points||a.tbdiff-b.tbdiff||a.name.localeCompare(b.name));
 
-    const clean = v => String(v ?? "").trim();
+  thead.innerHTML="";
+  const trh=document.createElement("tr");
+  ["#","Name","Points","Tiebreak Δ",...pickCols.map(c=>headers[c]||"Q")].forEach(t=>{
+    const th=document.createElement("th");th.textContent=t;trh.appendChild(th);
+  });
+  thead.appendChild(trh);
 
-    function toNumberLoose(v) {
-      const s = clean(v).replace(/[^0-9.-]/g, "");
-      const n = Number(s);
-      return Number.isFinite(n) ? n : null;
-    }
+  tbody.innerHTML="";
+  players.forEach((p,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td>${p.points}</td><td>${p.tbdiff}</td>`;
+    p.picks.forEach((c,idx)=>{
+      const key=p.name+"-"+idx;
+      const prev=previousState.get(key);
+      const now=c.pending?"wait":(c.correct?"good":"bad");
 
-    function isTrue(v){
-      const s = clean(v).toLowerCase();
-      return s === "true" || s === "yes" || s === "y" || s === "1";
-    }
+      const span=document.createElement("span");
+      span.className="cell "+now;
+      if(prev==="wait"&&now!=="wait") span.classList.add("reveal");
+      span.textContent=c.pick||"—";
 
-    function build(headers, resultsRow, dataRows){
-      const pickCols = [];
-      for (let c = PICKS_START_COL; c <= PICKS_END_COL; c++) pickCols.push(c);
+      previousState.set(key,now);
 
-      const players = dataRows
-        .filter(r => clean(r[NAME_COL]) !== "")
-        .map(r => {
-          const name = clean(r[NAME_COL]);
+      const td=document.createElement("td");
+      td.appendChild(span);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
 
-          const points = toNumberLoose(r[POINTS_COL]) ?? 0;
-          const tbdiff = toNumberLoose(r[TIEBREAK_DIFF_COL]) ?? 999999; // blanks go last
-          const dup = isTrue(r[DUP_COL]);
+  elCounts.textContent=`${players.length} entries`;
+}
 
-          const picks = pickCols.map(c => {
-            const pick = clean(r[c]);
-            const ans  = clean(resultsRow[c]);   // row 7 answer for that question
-            const pending = ans === "";
-            const correct = !pending && pick !== "" && pick.toLowerCase() === ans.toLowerCase();
-            return { pick, ans, pending, correct };
-          });
+async function refresh(){
+  try{
+    elStatus.textContent="Loading…";
+    const res=await fetch(SHEET_CSV_URL,{cache:"no-store"});
+    const text=await res.text();
+    cachedRows=parseCSV(text);
 
-          // Tiebreak guess column Q + answer Q7 + diff from R
-          const tbGuess = clean(r[TIE_GUESS_COL]);
-          const tbAns = clean(resultsRow[TIE_GUESS_COL]);
-          const tbPending = tbAns === "";
-          const tbDiff = toNumberLoose(r[TIEBREAK_DIFF_COL]);
+    const headers=cachedRows[0];
+    const results=cachedRows[RESULTS_ROW_NUMBER-1];
+    const data=cachedRows.slice(RESULTS_ROW_NUMBER);
 
-          return { name, points, tbdiff, dup, picks, tbGuess, tbAns, tbPending, tbDiff };
-        })
-        .sort((a,b) =>
-          (b.points - a.points) ||
-          (a.tbdiff - b.tbdiff) ||
-          a.name.localeCompare(b.name)
-        );
+    build(headers,results,data);
 
-      // Header
-      thead.innerHTML = "";
-      const trh = document.createElement("tr");
+    elUpdated.textContent="Updated: "+new Date().toLocaleTimeString();
+    elStatus.textContent="Live";
+  }catch(e){elStatus.textContent="Error"}
+}
 
-      const thRank = document.createElement("th"); thRank.className="col-rank"; thRank.textContent="#"; trh.appendChild(thRank);
-      const thName = document.createElement("th"); thName.className="col-name"; thName.textContent="Name"; trh.appendChild(thName);
-      const thPts  = document.createElement("th"); thPts.className="col-points"; thPts.textContent="Points"; trh.appendChild(thPts);
-      const thTBd  = document.createElement("th"); thTBd.className="col-tb"; thTBd.textContent="Tiebreak Δ"; trh.appendChild(thTBd);
-
-      // Questions B:P
-      pickCols.forEach(c => {
-        const th = document.createElement("th");
-        th.textContent = clean(headers[c]) || `Q${c - PICKS_START_COL + 1}`;
-        trh.appendChild(th);
-      });
-
-      // Tiebreak guess Q
-      const thTBg = document.createElement("th");
-      thTBg.textContent = clean(headers[TIE_GUESS_COL]) || "Tiebreak Guess";
-      trh.appendChild(thTBg);
-
-      thead.appendChild(trh);
-
-      // Body
-      tbody.innerHTML = "";
-      const q = clean(elQ.value).toLowerCase();
-      const filtered = q ? players.filter(p => p.name.toLowerCase().includes(q)) : players;
-
-      filtered.forEach((p, idx) => {
-        const tr = document.createElement("tr");
-
-        const tdRank = document.createElement("td");
-        tdRank.className="col-rank";
-        tdRank.textContent = String(idx + 1);
-        tr.appendChild(tdRank);
-
-        const tdName = document.createElement("td");
-        tdName.className="col-name";
-        const nameWrap = document.createElement("div");
-        nameWrap.className = "name-wrap";
-        const nameSpan = document.createElement("span");
-        nameSpan.textContent = p.name;
-        nameWrap.appendChild(nameSpan);
-
-        if (p.dup) {
-          const badge = document.createElement("span");
-          badge.className = "dup-badge";
-          badge.textContent = "Duplicate?";
-          badge.title = "This entry matches another entry (duplicate flag TRUE).";
-          nameWrap.appendChild(badge);
-        }
-        tdName.appendChild(nameWrap);
-        tr.appendChild(tdName);
-
-        const tdPts = document.createElement("td");
-        tdPts.className="col-points";
-        tdPts.textContent = String(p.points);
-        tr.appendChild(tdPts);
-
-        const tdTBd = document.createElement("td");
-        tdTBd.className="col-tb";
-        tdTBd.textContent = (p.tbdiff === 999999) ? "—" : String(p.tbdiff);
-        tr.appendChild(tdTBd);
-
-        // Picks B:P colored vs results row 7
-        p.picks.forEach(cell => {
-          const td = document.createElement("td");
-          const span = document.createElement("span");
-          span.className = "cell " + (cell.pending ? "wait" : (cell.correct ? "good" : "bad"));
-          span.textContent = cell.pick !== "" ? cell.pick : "—";
-          if (!cell.pending && cell.ans) span.title = "Result: " + cell.ans;
-          td.appendChild(span);
-          tr.appendChild(td);
-        });
-
-        // Tiebreak guess (Q) — neutral styling, tooltip shows answer + diff
-        const tdTBg = document.createElement("td");
-        const spanTB = document.createElement("span");
-        spanTB.className = "cell tb" + (p.tbPending ? " wait" : "");
-        spanTB.textContent = p.tbGuess !== "" ? p.tbGuess : "—";
-
-        if (!p.tbPending && p.tbAns) {
-          const diffText = (p.tbDiff === null || p.tbDiff === undefined) ? "—" : p.tbDiff;
-          spanTB.title = `Tiebreak Answer: ${p.tbAns} • Δ: ${diffText}`;
-        } else {
-          spanTB.title = "Tiebreak answer not set yet";
-        }
-
-        tdTBg.appendChild(spanTB);
-        tr.appendChild(tdTBg);
-
-        tbody.appendChild(tr);
-      });
-
-      elCounts.textContent = `${filtered.length} shown • ${players.length} total`;
-    }
-
-    function rerenderFromCache(){
-      if (!cachedRows.length) return;
-      const headerRow = cachedRows[0] || [];
-      const resultsIndex = RESULTS_ROW_NUMBER - 1;
-      const resultsRow = cachedRows[resultsIndex] || [];
-      const dataRows = cachedRows.slice(resultsIndex + 1); // rows 8+ in your sheet
-      build(headerRow, resultsRow, dataRows);
-    }
-
-    async function refresh(){
-      try{
-        elStatus.textContent = "Loading…";
-        const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const text = await res.text();
-        cachedRows = parseCSV(text);
-
-        rerenderFromCache();
-
-        const now = new Date();
-        elUpdated.textContent = "Updated: " + now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-        elStatus.textContent = "Live";
-      } catch(err){
-        elStatus.textContent = "Couldn’t load";
-        console.error(err);
-      }
-    }
-
-    elQ.addEventListener("input", rerenderFromCache);
-
-    refresh();
-    setInterval(refresh, REFRESH_MS);
-  </script>
+elQ.addEventListener("input",refresh);
+refresh();
+setInterval(refresh,REFRESH_MS);
+</script>
 </body>
 </html>
