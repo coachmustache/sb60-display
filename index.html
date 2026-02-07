@@ -9,6 +9,7 @@
     /* =========================
        DARK THEME + BROADCAST UI
        (NO STICKY COLUMNS)
+       + ROW SLIDE (FLIP)
        ========================= */
     :root{
       --bg: #0b0f19;
@@ -152,24 +153,25 @@
       min-width: 980px;
     }
 
-    /* ===== ALIGNMENT: make headers + data match ===== */
+    /* ===== ALIGNMENT: headers + data match ===== */
     thead th,
     tbody td{
       text-align: center;
       vertical-align: middle;
     }
 
-    /* Sticky header row */
     thead th{
       position: sticky;
       top: 0;
       z-index: 2;
       background: rgba(15,23,42,0.92);
       backdrop-filter: blur(10px);
+
       font-size: 12px;
       color: var(--muted);
       padding: 10px 8px;
       border-bottom: 1px solid var(--line);
+
       white-space: normal;
       word-break: break-word;
       line-height: 1.1;
@@ -194,17 +196,11 @@
       box-shadow: inset 0 0 0 1px var(--rowFocusBorder);
     }
 
-    /* Column sizing + numeric alignment polish */
-    .col-rank,
-    .col-points,
-    .col-tb{
-      font-variant-numeric: tabular-nums;
-    }
-
-    .col-rank{ width: 72px; color: var(--muted); }
-    .col-name{ width: 240px; font-weight: 900; text-align: left; } /* only one left-aligned */
-    .col-points{ width: 90px; font-weight: 900; }
-    .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
+    /* Column sizing */
+    .col-rank{ width: 72px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .col-name{ width: 240px; font-weight: 900; text-align:left; }
+    .col-points{ width: 90px; font-weight: 900; font-variant-numeric: tabular-nums; }
+    .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; font-variant-numeric: tabular-nums; }
 
     /* Prevent header wrap for Rank / Points / TB */
     thead th.col-rank,
@@ -277,6 +273,18 @@
       100%{ transform: scale(1); opacity: 1; }
     }
 
+    /* ===== Row slide (FLIP) ===== */
+    tbody tr{
+      will-change: transform;
+    }
+    tbody tr.row-enter{
+      animation: rowEnter .35s ease-out both;
+    }
+    @keyframes rowEnter{
+      0%{ opacity: 0; transform: translateY(10px); }
+      100%{ opacity: 1; transform: translateY(0); }
+    }
+
     /* Top 3 glow (only when awardsOn, class applied in JS) */
     tr.top1 td{ box-shadow: inset 0 0 0 1px rgba(34,197,94,0.35); }
     tr.top2 td{ box-shadow: inset 0 0 0 1px rgba(99,102,241,0.35); }
@@ -330,7 +338,7 @@
         </div>
       </div>
 
-      <div class="table-wrap">
+      <div class="table-wrap" id="tableWrap">
         <table>
           <thead id="thead"></thead>
           <tbody id="tbody"></tbody>
@@ -375,6 +383,9 @@
     const prevCellState = new Map(); // key -> "wait"|"good"|"bad"
     const prevTBState = new Map();   // name -> "wait"|"set"
 
+    // FLIP state: name -> previous top position (relative to tbody)
+    const prevRowTop = new Map();
+
     function parseCSV(text) {
       const rows = [];
       let row = [];
@@ -417,6 +428,66 @@
     function isTrue(v){
       const s = clean(v).toLowerCase();
       return s === "true" || s === "yes" || s === "y" || s === "1";
+    }
+
+    function snapshotRowPositions(){
+      // Capture current row tops BEFORE re-render (for FLIP)
+      const tbodyRect = tbody.getBoundingClientRect();
+      const rows = tbody.querySelectorAll("tr[data-name]");
+      rows.forEach(tr => {
+        const name = tr.getAttribute("data-name");
+        const r = tr.getBoundingClientRect();
+        const top = r.top - tbodyRect.top;
+        prevRowTop.set(name, top);
+      });
+    }
+
+    function playFlip(){
+      // After render: measure new positions and animate from old -> new
+      const tbodyRect = tbody.getBoundingClientRect();
+      const rows = Array.from(tbody.querySelectorAll("tr[data-name]"));
+
+      // Measure new tops and apply invert transforms
+      const moves = [];
+      rows.forEach(tr => {
+        const name = tr.getAttribute("data-name");
+        const r = tr.getBoundingClientRect();
+        const newTop = r.top - tbodyRect.top;
+
+        const oldTop = prevRowTop.get(name);
+        if (oldTop === undefined) {
+          tr.classList.add("row-enter");
+          return;
+        }
+
+        const dy = oldTop - newTop;
+        if (Math.abs(dy) > 0.5) {
+          moves.push({ tr, dy });
+        }
+      });
+
+      // Invert (no transition), then play (transition to 0)
+      if (!moves.length) return;
+
+      moves.forEach(({ tr, dy }) => {
+        tr.style.transition = "none";
+        tr.style.transform = `translateY(${dy}px)`;
+      });
+
+      requestAnimationFrame(() => {
+        moves.forEach(({ tr }) => {
+          tr.style.transition = "transform 520ms cubic-bezier(0.2, 0.9, 0.2, 1)";
+          tr.style.transform = "translateY(0)";
+        });
+
+        // cleanup
+        setTimeout(() => {
+          moves.forEach(({ tr }) => {
+            tr.style.transition = "";
+            tr.style.transform = "";
+          });
+        }, 560);
+      });
     }
 
     function build(headers, resultsRow, dataRows){
@@ -510,6 +581,7 @@
 
       filtered.forEach((p, idx) => {
         const tr = document.createElement("tr");
+        tr.setAttribute("data-name", p.name);
 
         // Highlight matching rows when searching
         if (q && p.name.toLowerCase().includes(q)) tr.classList.add("match");
@@ -530,17 +602,12 @@
         tdRank.className = "col-rank";
 
         let label;
-
         // Medals ONLY after all results are in
         if (awardsOn && rankNum <= 3) {
-          label =
-            rankNum === 1 ? "🥇" :
-            rankNum === 2 ? "🥈" :
-            "🥉";
+          label = (rankNum === 1) ? "🥇" : (rankNum === 2) ? "🥈" : "🥉";
         } else {
           label = isTied ? `T-${rankNum}` : String(rankNum);
         }
-
         tdRank.textContent = label;
         tr.appendChild(tdRank);
 
@@ -617,6 +684,9 @@
       });
 
       elCounts.textContent = `${filtered.length} shown • ${players.length} total`;
+
+      // Play row-slide animation AFTER DOM is in place
+      requestAnimationFrame(playFlip);
     }
 
     function rerenderFromCache(){
@@ -625,6 +695,7 @@
       const resultsIndex = RESULTS_ROW_NUMBER - 1;
       const resultsRow = cachedRows[resultsIndex] || [];
       const dataRows = cachedRows.slice(resultsIndex + 1); // rows 8+ in your sheet
+      snapshotRowPositions();
       build(headerRow, resultsRow, dataRows);
     }
 
@@ -647,7 +718,10 @@
       }
     }
 
-    elQ.addEventListener("input", rerenderFromCache);
+    elQ.addEventListener("input", () => {
+      // search re-render should still animate moves smoothly
+      rerenderFromCache();
+    });
 
     refresh();
     setInterval(refresh, REFRESH_MS);
