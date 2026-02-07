@@ -710,7 +710,7 @@
         rerenderFromCache();
 
         const now = new Date();
-        elUpdated.textContent = "Updated: " + now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        elUpdated.textContent = "Updated: " + now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", second: "2-digit" });
         elStatus.textContent = "Live";
       } catch(err){
         elStatus.textContent = "Couldn’t load";
