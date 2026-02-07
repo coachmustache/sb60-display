@@ -6,39 +6,59 @@
   <title>SB60 Live Standings</title>
 
   <style>
+    /* =========================
+       DARK THEME OVERHAUL
+       ========================= */
     :root{
-      --bg: #f3f3f3;
-      --card: #ffffff;
-      --ink: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
+      /* base */
+      --bg: #0b0f19;           /* page background */
+      --card: #0f172a;         /* panels */
+      --card2:#111c33;         /* subtle alt */
+      --ink: #e5e7eb;          /* main text */
+      --muted: #94a3b8;        /* secondary text */
+      --line: rgba(148,163,184,0.18);
 
-      --goodBg: #dcfce7;
-      --goodInk:#14532d;
+      /* accents */
+      --accent:#22c55e;        /* green dot */
 
-      --badBg:  #fee2e2;
-      --badInk: #7f1d1d;
+      /* cell states */
+      --goodBg: rgba(34,197,94,0.16);
+      --goodInk:#86efac;
 
-      --waitBg: #f3f4f6;
-      --waitInk:#374151;
+      --badBg:  rgba(239,68,68,0.16);
+      --badInk: #fca5a5;
 
-      --accent:#2ecc71;
+      --waitBg: rgba(148,163,184,0.10);
+      --waitInk:#cbd5e1;
 
-      --dupBg: #fff7ed;
-      --dupInk: #9a3412;
-      --dupBorder: #fdba74;
+      /* duplicate badge */
+      --dupBg: rgba(249,115,22,0.14);
+      --dupInk: #fdba74;
+      --dupBorder: rgba(249,115,22,0.38);
 
-      --tbBg: #eef2ff;
-      --tbInk:#312e81;
-      --tbBorder:#c7d2fe;
+      /* tiebreak */
+      --tbBg: rgba(99,102,241,0.18);
+      --tbInk:#c7d2fe;
+      --tbBorder: rgba(99,102,241,0.45);
+
+      /* misc */
+      --shadow: 0 18px 44px rgba(0,0,0,0.50), 0 6px 18px rgba(0,0,0,0.35);
+      --glow: 0 0 0 4px rgba(34,197,94,0.18);
     }
 
-    html, body { margin:0; padding:0; background:var(--bg); font-family: Arial, sans-serif; color:var(--ink); }
+    html, body {
+      margin:0; padding:0;
+      background: radial-gradient(1200px 800px at 15% 0%, rgba(34,197,94,0.10), transparent 55%),
+                  radial-gradient(900px 700px at 85% 0%, rgba(99,102,241,0.12), transparent 55%),
+                  var(--bg);
+      font-family: Arial, sans-serif;
+      color: var(--ink);
+    }
 
     .wrap{
       max-width: 1200px;
       margin: 0 auto;
-      padding: 14px;
+      padding: 16px;
     }
 
     .header{
@@ -63,11 +83,12 @@
     }
 
     .card{
-      background: var(--card);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       overflow: hidden;
+      backdrop-filter: blur(6px);
     }
 
     .toolbar{
@@ -77,7 +98,7 @@
       justify-content:space-between;
       padding: 12px 12px;
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, #ffffff, #fbfbfb);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       flex-wrap: wrap;
     }
 
@@ -87,8 +108,8 @@
       gap:8px;
       padding: 8px 12px;
       border-radius: 999px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
+      background: rgba(148,163,184,0.10);
+      border: 1px solid rgba(148,163,184,0.18);
       font-size: 13px;
       color: var(--muted);
     }
@@ -96,7 +117,7 @@
     .dot{
       width:10px; height:10px; border-radius:999px;
       background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(46,204,113,0.16);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
     }
 
     .search{
@@ -109,14 +130,17 @@
     input[type="search"]{
       width:min(420px, 100%);
       padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.22);
       outline: none;
       font-size: 14px;
+      color: var(--ink);
+      background: rgba(15,23,42,0.85);
     }
+    input[type="search"]::placeholder{ color: rgba(148,163,184,0.75); }
     input[type="search"]:focus{
-      border-color: rgba(46,204,113,0.6);
-      box-shadow: 0 0 0 4px rgba(46,204,113,0.18);
+      border-color: rgba(34,197,94,0.55);
+      box-shadow: var(--glow);
     }
 
     .table-wrap{
@@ -132,39 +156,42 @@
       min-width: 980px;
     }
 
-    /* ✅ Header wrap (headers ONLY) */
+    /* Header wrap (headers only) + dark sticky header */
     thead th{
       position: sticky;
       top: 0;
-      background: #ffffff;
       z-index: 2;
+
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(8px);
+
       text-align: center;
       font-size: 12px;
       color: var(--muted);
-      padding: 8px 6px;
+      padding: 10px 8px;
       border-bottom: 1px solid var(--line);
 
-      white-space: normal;     /* wrap */
-      word-break: break-word;  /* long words */
+      white-space: normal;
+      word-break: break-word;
       line-height: 1.1;
     }
 
     tbody td{
       padding: 10px 10px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(148,163,184,0.14);
       font-size: 14px;
       vertical-align: top;
-      white-space: nowrap; /* keep body from wrapping */
+      white-space: nowrap;
     }
 
     tbody tr:hover td{
-      background: #fafafa;
+      background: rgba(148,163,184,0.06);
     }
 
-    .col-rank{ width: 56px; }
+    .col-rank{ width: 56px; color: var(--muted); }
     .col-name{ width: 240px; font-weight: 900; }
     .col-points{ width: 90px; font-weight: 900; }
-    .col-tb{ width: 120px; font-weight: 800; }
+    .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
 
     .name-wrap{
       display:flex;
@@ -187,18 +214,21 @@
     }
 
     .cell{
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 8px 10px;
       display:inline-block;
       min-width: 90px;
       text-align:center;
       font-weight: 800;
-      border: 1px solid rgba(0,0,0,0.06);
-      background: #fff;
+      border: 1px solid rgba(148,163,184,0.20);
+      background: rgba(15,23,42,0.70);
+      color: var(--ink);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      transform: translateZ(0);
     }
-    .good{ background: var(--goodBg); color: var(--goodInk); }
-    .bad{  background: var(--badBg);  color: var(--badInk); }
-    .wait{ background: var(--waitBg); color: var(--waitInk); }
+    .good{ background: var(--goodBg); color: var(--goodInk); border-color: rgba(34,197,94,0.28); }
+    .bad{  background: var(--badBg);  color: var(--badInk);  border-color: rgba(239,68,68,0.28); }
+    .wait{ background: var(--waitBg); color: var(--waitInk); border-color: rgba(148,163,184,0.18); }
 
     /* Tiebreak cell */
     .tb{
@@ -209,10 +239,10 @@
     .tb.wait{
       background: var(--waitBg);
       color: var(--waitInk);
-      border-color: rgba(0,0,0,0.06);
+      border-color: rgba(148,163,184,0.18);
     }
 
-    /* ✨ Reveal animation (pending -> resolved) */
+    /* Reveal animation */
     .reveal{
       animation: pop .35s ease-out both;
     }
@@ -231,6 +261,7 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     }
 
     @media (max-width: 600px){
@@ -303,7 +334,7 @@
     const thead     = document.getElementById("thead");
     const tbody     = document.getElementById("tbody");
 
-    // Track previous state for animations (per person + column)
+    // Animation state trackers
     const prevCellState = new Map(); // key -> "wait"|"good"|"bad"
     const prevTBState = new Map();   // name -> "wait"|"set"
 
@@ -447,7 +478,6 @@
 
         const tdTBd = document.createElement("td");
         tdTBd.className="col-tb";
-        // ✅ render sentinel as dash
         tdTBd.textContent = (p.tbdiffSort === 999999) ? "—" : String(p.tbdiffSort);
         tr.appendChild(tdTBd);
 
@@ -459,7 +489,6 @@
           const state = cell.pending ? "wait" : (cell.correct ? "good" : "bad");
           span.className = "cell " + state;
 
-          // ✨ animate only when it changes from pending -> resolved
           const key = `${p.name}|${cell.colIndex}`;
           const prev = prevCellState.get(key);
           if (prev === "wait" && state !== "wait") span.classList.add("reveal");
@@ -478,8 +507,7 @@
         spanTB.className = "cell tb" + (p.tbPending ? " wait" : "");
         spanTB.textContent = p.tbGuess !== "" ? p.tbGuess : "—";
 
-        // ✨ reveal when tb answer flips from pending -> set
-        const tbPrev = prevTBState.get(p.name); // "wait"|"set"|undefined
+        const tbPrev = prevTBState.get(p.name);
         const tbNow = p.tbPending ? "wait" : "set";
         if (tbPrev === "wait" && tbNow === "set") spanTB.classList.add("reveal");
         prevTBState.set(p.name, tbNow);
