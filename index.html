@@ -107,6 +107,7 @@
       border: 1px solid rgba(148,163,184,0.18);
       font-size: 13px;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     .dot{
@@ -191,12 +192,12 @@
     }
 
     /* Column sizing */
-    .col-rank{ width: 72px; color: var(--muted); } /* widened */
+    .col-rank{ width: 72px; color: var(--muted); }
     .col-name{ width: 240px; font-weight: 900; }
     .col-points{ width: 90px; font-weight: 900; }
     .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
 
-    /* Prevent "Rank" from wrapping vertically */
+    /* Prevent "Rank" from wrapping */
     thead th.col-rank{
       white-space: nowrap;
       word-break: normal;
@@ -229,6 +230,7 @@
       color: var(--dupInk);
       background: var(--dupBg);
       border: 1px solid var(--dupBorder);
+      white-space: nowrap;
     }
 
     /* Pick cells */
@@ -316,6 +318,7 @@
       <div class="toolbar">
         <div class="pill"><span class="dot"></span><span>Auto-updates every 30s</span></div>
         <div class="pill">Sorted: Points ↓ • Tiebreak Δ ↑ • Name</div>
+        <div class="pill" id="graded-pill">Graded: — / 15</div>
         <div class="search">
           <input id="q" type="search" placeholder="Search name…" />
         </div>
@@ -358,6 +361,7 @@
     const elStatus  = document.getElementById("status");
     const elCounts  = document.getElementById("counts");
     const elQ       = document.getElementById("q");
+    const elGraded  = document.getElementById("graded-pill");
     const thead     = document.getElementById("thead");
     const tbody     = document.getElementById("tbody");
 
@@ -420,6 +424,15 @@
         }
         return true;
       })();
+
+      // Graded count ONLY B7:P7 (15)
+      let gradedCount = 0;
+      const gradedTotal = (PICKS_END_COL - PICKS_START_COL + 1); // 15
+      for (let c = PICKS_START_COL; c <= PICKS_END_COL; c++) { // B..P
+        if (clean(resultsRow[c]) !== "") gradedCount++;
+      }
+      elGraded.textContent = `Graded: ${gradedCount} / ${gradedTotal}`;
+      elGraded.title = "Does not include tiebreak";
 
       const players = dataRows
         .filter(r => clean(r[NAME_COL]) !== "")
