@@ -151,7 +151,7 @@
       min-width: 980px;
     }
 
-    /* Sticky header row is good */
+    /* Sticky header row */
     thead th{
       position: sticky;
       top: 0;
@@ -191,10 +191,17 @@
     }
 
     /* Column sizing */
-    .col-rank{ width: 56px; color: var(--muted); }
+    .col-rank{ width: 72px; color: var(--muted); } /* widened */
     .col-name{ width: 240px; font-weight: 900; }
     .col-points{ width: 90px; font-weight: 900; }
     .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
+
+    /* Prevent "Rank" from wrapping vertically */
+    thead th.col-rank{
+      white-space: nowrap;
+      word-break: normal;
+      min-width: 72px;
+    }
 
     /* Keep Points/TB headers from wrapping weird on mobile */
     thead th.col-points,
@@ -288,6 +295,7 @@
       .meta{ text-align:left; }
       table{ min-width: 900px; }
       .col-name{ width: 200px; }
+      thead th.col-rank{ min-width: 72px; }
       thead th.col-points, thead th.col-tb { min-width: 74px; }
       .cell{ min-width: 86px; }
     }
@@ -489,22 +497,32 @@
 
         const rankNum = ranks[idx];
 
-        // Top 3 glow ONLY after awards are on (and based on rank)
+        // Top 3 glow ONLY after awards are on (based on rank)
         if (awardsOn) {
           if (rankNum === 1) tr.classList.add("top1");
           else if (rankNum === 2) tr.classList.add("top2");
           else if (rankNum === 3) tr.classList.add("top3");
         }
 
-        // Rank with medals ONLY after awards are on
-        const tdRank = document.createElement("td");
-        tdRank.className="col-rank";
+        // detect if this rank is tied
+        const isTied = ranks.indexOf(rankNum) !== ranks.lastIndexOf(rankNum);
 
-        let medal = "";
-        if (awardsOn) {
-          medal = (rankNum === 1) ? "🥇" : (rankNum === 2) ? "🥈" : (rankNum === 3) ? "🥉" : "";
+        const tdRank = document.createElement("td");
+        tdRank.className = "col-rank";
+
+        let label;
+
+        // Medals ONLY after all results are in
+        if (awardsOn && rankNum <= 3) {
+          label =
+            rankNum === 1 ? "🥇" :
+            rankNum === 2 ? "🥈" :
+            "🥉";
+        } else {
+          label = isTied ? `T-${rankNum}` : String(rankNum);
         }
-        tdRank.textContent = medal ? medal : String(rankNum);
+
+        tdRank.textContent = label;
         tr.appendChild(tdRank);
 
         const tdName = document.createElement("td");
