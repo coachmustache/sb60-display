@@ -7,21 +7,19 @@
 
   <style>
     /* =========================
-       DARK THEME OVERHAUL
+       DARK THEME + BROADCAST UI
        ========================= */
     :root{
-      /* base */
-      --bg: #0b0f19;           /* page background */
-      --card: #0f172a;         /* panels */
-      --card2:#111c33;         /* subtle alt */
-      --ink: #e5e7eb;          /* main text */
-      --muted: #94a3b8;        /* secondary text */
+      --bg: #0b0f19;
+      --ink: #e5e7eb;
+      --muted: #94a3b8;
+
+      --card: rgba(15,23,42,0.86);
+      --cardTop: rgba(255,255,255,0.05);
       --line: rgba(148,163,184,0.18);
 
-      /* accents */
-      --accent:#22c55e;        /* green dot */
+      --accent:#22c55e;
 
-      /* cell states */
       --goodBg: rgba(34,197,94,0.16);
       --goodInk:#86efac;
 
@@ -31,35 +29,29 @@
       --waitBg: rgba(148,163,184,0.10);
       --waitInk:#cbd5e1;
 
-      /* duplicate badge */
       --dupBg: rgba(249,115,22,0.14);
       --dupInk: #fdba74;
       --dupBorder: rgba(249,115,22,0.38);
 
-      /* tiebreak */
       --tbBg: rgba(99,102,241,0.18);
       --tbInk:#c7d2fe;
       --tbBorder: rgba(99,102,241,0.45);
 
-      /* misc */
       --shadow: 0 18px 44px rgba(0,0,0,0.50), 0 6px 18px rgba(0,0,0,0.35);
-      --glow: 0 0 0 4px rgba(34,197,94,0.18);
+      --focusGlow: 0 0 0 4px rgba(34,197,94,0.18);
     }
 
-    html, body {
+    html, body{
       margin:0; padding:0;
-      background: radial-gradient(1200px 800px at 15% 0%, rgba(34,197,94,0.10), transparent 55%),
-                  radial-gradient(900px 700px at 85% 0%, rgba(99,102,241,0.12), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(1200px 800px at 15% 0%, rgba(34,197,94,0.10), transparent 55%),
+        radial-gradient(900px 700px at 85% 0%, rgba(99,102,241,0.12), transparent 55%),
+        var(--bg);
       font-family: Arial, sans-serif;
       color: var(--ink);
     }
 
-    .wrap{
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px;
-    }
+    .wrap{ max-width: 1200px; margin: 0 auto; padding: 16px; }
 
     .header{
       display:flex;
@@ -69,26 +61,22 @@
       margin-bottom: 12px;
     }
 
-    .title{
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: .5px;
-    }
+    .title{ font-size: 22px; font-weight: 900; letter-spacing: .4px; }
 
     .meta{
       text-align:right;
       font-size: 12px;
       color: var(--muted);
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      background: linear-gradient(180deg, var(--cardTop), rgba(255,255,255,0.02));
       border: 1px solid var(--line);
       border-radius: 16px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
     }
 
     .toolbar{
@@ -140,7 +128,7 @@
     input[type="search"]::placeholder{ color: rgba(148,163,184,0.75); }
     input[type="search"]:focus{
       border-color: rgba(34,197,94,0.55);
-      box-shadow: var(--glow);
+      box-shadow: var(--focusGlow);
     }
 
     .table-wrap{
@@ -156,14 +144,15 @@
       min-width: 980px;
     }
 
-    /* Header wrap (headers only) + dark sticky header */
+    /* ===== Header =====
+       Default: wrap allowed (good for long question headers)
+    */
     thead th{
       position: sticky;
       top: 0;
       z-index: 2;
-
       background: rgba(15,23,42,0.92);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
 
       text-align: center;
       font-size: 12px;
@@ -184,14 +173,27 @@
       white-space: nowrap;
     }
 
+    /* Subtle striping */
+    tbody tr:nth-child(odd) td  { background: rgba(148,163,184,0.02); }
+    tbody tr:nth-child(even) td { background: rgba(148,163,184,0.04); }
+
     tbody tr:hover td{
       background: rgba(148,163,184,0.06);
     }
 
+    /* Column sizing */
     .col-rank{ width: 56px; color: var(--muted); }
     .col-name{ width: 240px; font-weight: 900; }
     .col-points{ width: 90px; font-weight: 900; }
     .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
+
+    /* ✅ Fix mobile header wrap for Points/TB */
+    thead th.col-points,
+    thead th.col-tb{
+      white-space: nowrap;
+      word-break: normal;
+      min-width: 78px;
+    }
 
     .name-wrap{
       display:flex;
@@ -213,6 +215,7 @@
       border: 1px solid var(--dupBorder);
     }
 
+    /* Pick cells */
     .cell{
       border-radius: 12px;
       padding: 8px 10px;
@@ -230,7 +233,7 @@
     .bad{  background: var(--badBg);  color: var(--badInk);  border-color: rgba(239,68,68,0.28); }
     .wait{ background: var(--waitBg); color: var(--waitInk); border-color: rgba(148,163,184,0.18); }
 
-    /* Tiebreak cell */
+    /* Tiebreak guess cell */
     .tb{
       background: var(--tbBg);
       color: var(--tbInk);
@@ -242,15 +245,36 @@
       border-color: rgba(148,163,184,0.18);
     }
 
-    /* Reveal animation */
-    .reveal{
-      animation: pop .35s ease-out both;
-    }
+    /* Reveal animation (pending -> resolved) */
+    .reveal{ animation: pop .35s ease-out both; }
     @keyframes pop{
       0%{ transform: scale(.92); opacity: 0; }
       65%{ transform: scale(1.04); opacity: 1; }
       100%{ transform: scale(1); opacity: 1; }
     }
+
+    /* ===== Sticky left columns =====
+       Keeps #, Name, Points, TB visible while scrolling picks
+    */
+    thead th.col-rank,   tbody td.col-rank   { position: sticky; left: 0;   z-index: 6; }
+    thead th.col-name,   tbody td.col-name   { position: sticky; left: 56px; z-index: 6; }
+    thead th.col-points, tbody td.col-points { position: sticky; left: 296px; z-index: 6; }
+    thead th.col-tb,     tbody td.col-tb     { position: sticky; left: 386px; z-index: 6; }
+
+    /* Make sticky cells match the row background */
+    tbody td.col-rank, tbody td.col-name, tbody td.col-points, tbody td.col-tb{
+      background: inherit;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ===== Top 3 broadcast glow ===== */
+    tr.top1 td{ box-shadow: inset 0 0 0 1px rgba(34,197,94,0.35); }
+    tr.top2 td{ box-shadow: inset 0 0 0 1px rgba(99,102,241,0.35); }
+    tr.top3 td{ box-shadow: inset 0 0 0 1px rgba(249,115,22,0.35); }
+
+    tr.top1 td.col-name{ text-shadow: 0 0 14px rgba(34,197,94,0.35); }
+    tr.top2 td.col-name{ text-shadow: 0 0 14px rgba(99,102,241,0.35); }
+    tr.top3 td.col-name{ text-shadow: 0 0 14px rgba(249,115,22,0.35); }
 
     .footer{
       padding: 10px 12px;
@@ -269,6 +293,8 @@
       .meta{ text-align:left; }
       table{ min-width: 900px; }
       .col-name{ width: 200px; }
+      thead th.col-points, thead th.col-tb { min-width: 74px; }
+      .cell{ min-width: 86px; }
     }
   </style>
 </head>
@@ -448,9 +474,16 @@
       filtered.forEach((p, idx) => {
         const tr = document.createElement("tr");
 
+        // Top 3 glow classes
+        if (idx === 0) tr.classList.add("top1");
+        else if (idx === 1) tr.classList.add("top2");
+        else if (idx === 2) tr.classList.add("top3");
+
+        // Rank with medals
         const tdRank = document.createElement("td");
         tdRank.className="col-rank";
-        tdRank.textContent = String(idx + 1);
+        const medal = (idx === 0) ? "🥇" : (idx === 1) ? "🥈" : (idx === 2) ? "🥉" : "";
+        tdRank.textContent = medal ? medal : String(idx + 1);
         tr.appendChild(tdRank);
 
         const tdName = document.createElement("td");
