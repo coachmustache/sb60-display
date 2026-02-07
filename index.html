@@ -39,6 +39,13 @@
 
       --shadow: 0 18px 44px rgba(0,0,0,0.50), 0 6px 18px rgba(0,0,0,0.35);
       --focusGlow: 0 0 0 4px rgba(34,197,94,0.18);
+
+      /* Row striping / highlight */
+      --rowOdd: rgba(148,163,184,0.02);
+      --rowEven: rgba(148,163,184,0.06);   /* stronger than before */
+      --rowHover: rgba(148,163,184,0.10);
+      --rowFocus: rgba(34,197,94,0.10);
+      --rowFocusBorder: rgba(34,197,94,0.28);
     }
 
     html, body{
@@ -144,9 +151,7 @@
       min-width: 980px;
     }
 
-    /* ===== Header =====
-       Default: wrap allowed (good for long question headers)
-    */
+    /* Sticky header row is good */
     thead th{
       position: sticky;
       top: 0;
@@ -171,14 +176,19 @@
       font-size: 14px;
       vertical-align: top;
       white-space: nowrap;
+      background: transparent;
     }
 
-    /* Subtle striping */
-    tbody tr:nth-child(odd) td  { background: rgba(148,163,184,0.02); }
-    tbody tr:nth-child(even) td { background: rgba(148,163,184,0.04); }
+    /* Stronger striping for tracking rows while scrolling */
+    tbody tr:nth-child(odd)  td { background: var(--rowOdd); }
+    tbody tr:nth-child(even) td { background: var(--rowEven); }
 
-    tbody tr:hover td{
-      background: rgba(148,163,184,0.06);
+    tbody tr:hover td{ background: var(--rowHover); }
+
+    /* When searching, highlight matching row(s) */
+    tbody tr.match td{
+      background: var(--rowFocus) !important;
+      box-shadow: inset 0 0 0 1px var(--rowFocusBorder);
     }
 
     /* Column sizing */
@@ -187,7 +197,7 @@
     .col-points{ width: 90px; font-weight: 900; }
     .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
 
-    /* ✅ Fix mobile header wrap for Points/TB */
+    /* Keep Points/TB headers from wrapping weird on mobile */
     thead th.col-points,
     thead th.col-tb{
       white-space: nowrap;
@@ -253,21 +263,7 @@
       100%{ transform: scale(1); opacity: 1; }
     }
 
-    /* ===== Sticky left columns =====
-       Keeps #, Name, Points, TB visible while scrolling picks
-    */
-    thead th.col-rank,   tbody td.col-rank   { position: sticky; left: 0;   z-index: 6; }
-    thead th.col-name,   tbody td.col-name   { position: sticky; left: 56px; z-index: 6; }
-    thead th.col-points, tbody td.col-points { position: sticky; left: 296px; z-index: 6; }
-    thead th.col-tb,     tbody td.col-tb     { position: sticky; left: 386px; z-index: 6; }
-
-    /* Make sticky cells match the row background */
-    tbody td.col-rank, tbody td.col-name, tbody td.col-points, tbody td.col-tb{
-      background: inherit;
-      backdrop-filter: blur(8px);
-    }
-
-    /* ===== Top 3 broadcast glow ===== */
+    /* Top 3 broadcast glow (kept) */
     tr.top1 td{ box-shadow: inset 0 0 0 1px rgba(34,197,94,0.35); }
     tr.top2 td{ box-shadow: inset 0 0 0 1px rgba(99,102,241,0.35); }
     tr.top3 td{ box-shadow: inset 0 0 0 1px rgba(249,115,22,0.35); }
@@ -336,16 +332,14 @@
     const SHEET_CSV_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvxWm5EeVD-akvWoB9ArtroL8J1nh8USmTiPdepmbp8JNS3HfQvKtOfSEcgumT4mccp95PJBJBlfix/pub?gid=1947708892&single=true&output=csv";
 
-    // Sheet layout
     const RESULTS_ROW_NUMBER = 7; // results live in row 7 (1-based)
 
     // Columns (0-based indexes)
     const NAME_COL = 0;            // A
     const PICKS_START_COL = 1;     // B
-    const PICKS_END_COL = 15;      // P  (B=1 ... P=15)
+    const PICKS_END_COL = 15;      // P
     const TIE_GUESS_COL = 16;      // Q
 
-    // Calculated columns you already have
     const TIEBREAK_DIFF_COL = 17; // R
     const POINTS_COL = 18;        // S
     const DUP_COL = 20;           // U
@@ -423,13 +417,12 @@
 
           const picks = pickCols.map(c => {
             const pick = clean(r[c]);
-            const ans  = clean(resultsRow[c]);   // row 7 answer for that question
+            const ans  = clean(resultsRow[c]);
             const pending = ans === "";
             const correct = !pending && pick !== "" && pick.toLowerCase() === ans.toLowerCase();
             return { pick, ans, pending, correct, colIndex: c };
           });
 
-          // Tiebreak guess column Q + answer Q7 + diff from R
           const tbGuess = clean(r[TIE_GUESS_COL]);
           const tbAns = clean(resultsRow[TIE_GUESS_COL]);
           const tbPending = tbAns === "";
@@ -452,14 +445,12 @@
       const thPts  = document.createElement("th"); thPts.className="col-points"; thPts.textContent="Points"; trh.appendChild(thPts);
       const thTBd  = document.createElement("th"); thTBd.className="col-tb"; thTBd.textContent="Tiebreak Δ"; trh.appendChild(thTBd);
 
-      // Questions B:P
       pickCols.forEach(c => {
         const th = document.createElement("th");
         th.textContent = clean(headers[c]) || `Q${c - PICKS_START_COL + 1}`;
         trh.appendChild(th);
       });
 
-      // Tiebreak guess Q
       const thTBg = document.createElement("th");
       thTBg.textContent = clean(headers[TIE_GUESS_COL]) || "Tiebreak Guess";
       trh.appendChild(thTBg);
@@ -474,10 +465,13 @@
       filtered.forEach((p, idx) => {
         const tr = document.createElement("tr");
 
-        // Top 3 glow classes
+        // Top 3 glow
         if (idx === 0) tr.classList.add("top1");
         else if (idx === 1) tr.classList.add("top2");
         else if (idx === 2) tr.classList.add("top3");
+
+        // Highlight matching rows when searching
+        if (q && p.name.toLowerCase().includes(q)) tr.classList.add("match");
 
         // Rank with medals
         const tdRank = document.createElement("td");
@@ -514,7 +508,7 @@
         tdTBd.textContent = (p.tbdiffSort === 999999) ? "—" : String(p.tbdiffSort);
         tr.appendChild(tdTBd);
 
-        // Picks B:P colored vs results row 7 + reveal animation
+        // Picks
         p.picks.forEach(cell => {
           const td = document.createElement("td");
           const span = document.createElement("span");
@@ -534,7 +528,7 @@
           tr.appendChild(td);
         });
 
-        // Tiebreak guess (Q) — reveal animation when answer appears
+        // Tiebreak guess (Q)
         const tdTBg = document.createElement("td");
         const spanTB = document.createElement("span");
         spanTB.className = "cell tb" + (p.tbPending ? " wait" : "");
