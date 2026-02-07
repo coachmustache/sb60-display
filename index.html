@@ -38,7 +38,9 @@
       --tbBorder: rgba(99,102,241,0.45);
 
       --shadow: 0 18px 44px rgba(0,0,0,0.50), 0 6px 18px rgba(0,0,0,0.35);
+      --focusGlow: 0 0 0 4px rgba(34,197,94,0.18);
 
+      /* Row striping / highlight */
       --rowOdd: rgba(148,163,184,0.02);
       --rowEven: rgba(148,163,184,0.06);
       --rowHover: rgba(148,163,184,0.10);
@@ -47,10 +49,11 @@
     }
 
     html, body{
-      margin:0;
-      background: radial-gradient(1200px 800px at 15% 0%, rgba(34,197,94,0.10), transparent 55%),
-                  radial-gradient(900px 700px at 85% 0%, rgba(99,102,241,0.12), transparent 55%),
-                  var(--bg);
+      margin:0; padding:0;
+      background:
+        radial-gradient(1200px 800px at 15% 0%, rgba(34,197,94,0.10), transparent 55%),
+        radial-gradient(900px 700px at 85% 0%, rgba(99,102,241,0.12), transparent 55%),
+        var(--bg);
       font-family: Arial, sans-serif;
       color: var(--ink);
     }
@@ -59,182 +62,595 @@
 
     .header{
       display:flex;
-      justify-content:space-between;
       align-items:flex-end;
-      margin-bottom:12px;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 12px;
     }
 
-    .title{ font-size:22px; font-weight:900; }
+    .title{ font-size: 22px; font-weight: 900; letter-spacing: .4px; }
 
-    .meta{ font-size:12px; color:var(--muted); text-align:right; }
+    .meta{
+      text-align:right;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.25;
+    }
 
     .card{
       background: linear-gradient(180deg, var(--cardTop), rgba(255,255,255,0.02));
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
       backdrop-filter: blur(8px);
     }
 
     .toolbar{
       display:flex;
       gap:10px;
-      flex-wrap:wrap;
-      padding:12px;
-      border-bottom:1px solid var(--line);
+      align-items:center;
+      justify-content:space-between;
+      padding: 12px 12px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      flex-wrap: wrap;
     }
 
     .pill{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:8px 12px;
-      border-radius:999px;
+      padding: 8px 12px;
+      border-radius: 999px;
       background: rgba(148,163,184,0.10);
-      border:1px solid rgba(148,163,184,0.18);
-      font-size:13px;
-      color:var(--muted);
-      white-space:nowrap;
+      border: 1px solid rgba(148,163,184,0.18);
+      font-size: 13px;
+      color: var(--muted);
+      white-space: nowrap;
     }
 
     .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:var(--accent);
-      box-shadow:0 0 0 4px rgba(34,197,94,0.18);
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.18);
     }
 
     .search{
-      margin-left:auto;
+      flex: 1 1 200px;
+      min-width: 200px;
+      display:flex;
+      justify-content:flex-end;
     }
 
     input[type="search"]{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,0.22);
-      background:rgba(15,23,42,0.85);
-      color:var(--ink);
-      font-size:14px;
+      width:min(420px, 100%);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.22);
+      outline: none;
+      font-size: 14px;
+      color: var(--ink);
+      background: rgba(15,23,42,0.85);
+    }
+    input[type="search"]::placeholder{ color: rgba(148,163,184,0.75); }
+    input[type="search"]:focus{
+      border-color: rgba(34,197,94,0.55);
+      box-shadow: var(--focusGlow);
     }
 
     .table-wrap{
-      overflow:auto;
+      width: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     table{
-      width:100%;
-      min-width:980px;
-      border-collapse:separate;
-      border-spacing:0;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 980px;
     }
 
-    /* ===== GLOBAL ALIGNMENT FIX ===== */
+    /* ===== ALIGNMENT: make headers + data match ===== */
     thead th,
     tbody td{
-      text-align:center;
-      vertical-align:middle;
+      text-align: center;
+      vertical-align: middle;
     }
 
+    /* Sticky header row */
     thead th{
-      position:sticky;
-      top:0;
-      background:rgba(15,23,42,0.92);
-      backdrop-filter:blur(10px);
-      font-size:12px;
-      color:var(--muted);
-      padding:10px 8px;
-      border-bottom:1px solid var(--line);
-      white-space:normal;
-      line-height:1.1;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: rgba(15,23,42,0.92);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      color: var(--muted);
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.1;
     }
 
     tbody td{
-      padding:10px;
-      font-size:14px;
-      white-space:nowrap;
-      border-bottom:1px solid rgba(148,163,184,0.14);
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(148,163,184,0.14);
+      font-size: 14px;
+      white-space: nowrap;
+      background: transparent;
     }
 
-    tbody tr:nth-child(odd) td{ background:var(--rowOdd); }
-    tbody tr:nth-child(even) td{ background:var(--rowEven); }
-    tbody tr:hover td{ background:var(--rowHover); }
+    /* Strong striping for tracking rows while scrolling */
+    tbody tr:nth-child(odd)  td { background: var(--rowOdd); }
+    tbody tr:nth-child(even) td { background: var(--rowEven); }
+    tbody tr:hover td{ background: var(--rowHover); }
 
+    /* Highlight matching row(s) when searching */
     tbody tr.match td{
-      background:var(--rowFocus)!important;
-      box-shadow:inset 0 0 0 1px var(--rowFocusBorder);
+      background: var(--rowFocus) !important;
+      box-shadow: inset 0 0 0 1px var(--rowFocusBorder);
     }
 
-    /* Column widths + numeric alignment */
+    /* Column sizing + numeric alignment polish */
     .col-rank,
     .col-points,
     .col-tb{
       font-variant-numeric: tabular-nums;
     }
 
-    .col-rank{ width:72px; }
-    .col-name{ width:240px; text-align:left; font-weight:900; }
-    .col-points{ width:90px; }
-    .col-tb{ width:120px; }
+    .col-rank{ width: 72px; color: var(--muted); }
+    .col-name{ width: 240px; font-weight: 900; text-align: left; } /* only one left-aligned */
+    .col-points{ width: 90px; font-weight: 900; }
+    .col-tb{ width: 120px; font-weight: 800; color: #cbd5e1; }
 
+    /* Prevent header wrap for Rank / Points / TB */
     thead th.col-rank,
     thead th.col-points,
     thead th.col-tb{
-      white-space:nowrap;
+      white-space: nowrap;
+      word-break: normal;
+      min-width: 72px;
     }
+    thead th.col-points{ min-width: 78px; }
+    thead th.col-tb{ min-width: 78px; }
 
     .name-wrap{
       display:flex;
       align-items:center;
       gap:8px;
       justify-content:flex-start;
+      flex-wrap: wrap;
     }
 
     .dup-badge{
-      font-size:11px;
-      padding:4px 8px;
-      border-radius:999px;
-      background:var(--dupBg);
-      border:1px solid var(--dupBorder);
-      color:var(--dupInk);
-      font-weight:800;
-      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--dupInk);
+      background: var(--dupBg);
+      border: 1px solid var(--dupBorder);
+      white-space: nowrap;
     }
 
+    /* Pick cells */
     .cell{
+      border-radius: 12px;
+      padding: 8px 10px;
       display:inline-block;
-      min-width:90px;
-      padding:8px 10px;
-      border-radius:12px;
-      font-weight:800;
-      border:1px solid rgba(148,163,184,0.20);
-      background:rgba(15,23,42,0.7);
-      box-shadow:0 2px 10px rgba(0,0,0,0.18);
+      min-width: 90px;
+      text-align:center;
+      font-weight: 800;
+      border: 1px solid rgba(148,163,184,0.20);
+      background: rgba(15,23,42,0.70);
+      color: var(--ink);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      transform: translateZ(0);
+    }
+    .good{ background: var(--goodBg); color: var(--goodInk); border-color: rgba(34,197,94,0.28); }
+    .bad{  background: var(--badBg);  color: var(--badInk);  border-color: rgba(239,68,68,0.28); }
+    .wait{ background: var(--waitBg); color: var(--waitInk); border-color: rgba(148,163,184,0.18); }
+
+    /* Tiebreak guess cell */
+    .tb{
+      background: var(--tbBg);
+      color: var(--tbInk);
+      border-color: var(--tbBorder);
+    }
+    .tb.wait{
+      background: var(--waitBg);
+      color: var(--waitInk);
+      border-color: rgba(148,163,184,0.18);
     }
 
-    .good{ background:var(--goodBg); color:var(--goodInk); }
-    .bad{ background:var(--badBg); color:var(--badInk); }
-    .wait{ background:var(--waitBg); color:var(--waitInk); }
+    /* Reveal animation (pending -> resolved) */
+    .reveal{ animation: pop .35s ease-out both; }
+    @keyframes pop{
+      0%{ transform: scale(.92); opacity: 0; }
+      65%{ transform: scale(1.04); opacity: 1; }
+      100%{ transform: scale(1); opacity: 1; }
+    }
 
-    .tb{ background:var(--tbBg); color:var(--tbInk); }
+    /* Top 3 glow (only when awardsOn, class applied in JS) */
+    tr.top1 td{ box-shadow: inset 0 0 0 1px rgba(34,197,94,0.35); }
+    tr.top2 td{ box-shadow: inset 0 0 0 1px rgba(99,102,241,0.35); }
+    tr.top3 td{ box-shadow: inset 0 0 0 1px rgba(249,115,22,0.35); }
 
-    tr.top1 td.col-name{ text-shadow:0 0 14px rgba(34,197,94,0.35); }
-    tr.top2 td.col-name{ text-shadow:0 0 14px rgba(99,102,241,0.35); }
-    tr.top3 td.col-name{ text-shadow:0 0 14px rgba(249,115,22,0.35); }
+    tr.top1 td.col-name{ text-shadow: 0 0 14px rgba(34,197,94,0.35); }
+    tr.top2 td.col-name{ text-shadow: 0 0 14px rgba(99,102,241,0.35); }
+    tr.top3 td.col-name{ text-shadow: 0 0 14px rgba(249,115,22,0.35); }
 
     .footer{
-      padding:10px 12px;
-      font-size:12px;
-      color:var(--muted);
-      border-top:1px solid var(--line);
+      padding: 10px 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
       display:flex;
-      justify-content:space-between;
-      gap:8px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    }
+
+    @media (max-width: 600px){
+      .header{ flex-direction: column; align-items:flex-start; }
+      .meta{ text-align:left; }
+      table{ min-width: 900px; }
+      .col-name{ width: 200px; }
+      thead th.col-rank{ min-width: 72px; }
+      thead th.col-points, thead th.col-tb { min-width: 74px; }
+      .cell{ min-width: 86px; }
     }
   </style>
 </head>
 
 <body>
-  <!-- HTML + JS unchanged from your last working version -->
-  <!-- Only alignment and styling were adjusted -->
+  <div class="wrap">
+    <div class="header">
+      <div class="title">SB60 Live Standings</div>
+      <div class="meta">
+        <div id="updated">Updated: —</div>
+        <div id="status">Loading…</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <div class="pill"><span class="dot"></span><span>Auto-updates every 30s</span></div>
+        <div class="pill">Sorted: Points ↓ • Tiebreak Δ ↑ • Name</div>
+        <div class="pill" id="graded-pill">Graded: — / 15</div>
+        <div class="search">
+          <input id="q" type="search" placeholder="Search name…" />
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="thead"></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <div>Green = correct • Red = incorrect • Gray = pending • “Duplicate?” badge = identical picks</div>
+        <div id="counts">—</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_CSV_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vQvxWm5EeVD-akvWoB9ArtroL8J1nh8USmTiPdepmbp8JNS3HfQvKtOfSEcgumT4mccp95PJBJBlfix/pub?gid=1947708892&single=true&output=csv";
+
+    const RESULTS_ROW_NUMBER = 7; // results live in row 7 (1-based)
+
+    // Columns (0-based indexes)
+    const NAME_COL = 0;            // A
+    const PICKS_START_COL = 1;     // B
+    const PICKS_END_COL = 15;      // P
+    const TIE_GUESS_COL = 16;      // Q
+
+    const TIEBREAK_DIFF_COL = 17; // R
+    const POINTS_COL = 18;        // S
+    const DUP_COL = 20;           // U
+
+    const REFRESH_MS = 30000;
+
+    let cachedRows = [];
+    const elUpdated = document.getElementById("updated");
+    const elStatus  = document.getElementById("status");
+    const elCounts  = document.getElementById("counts");
+    const elQ       = document.getElementById("q");
+    const elGraded  = document.getElementById("graded-pill");
+    const thead     = document.getElementById("thead");
+    const tbody     = document.getElementById("tbody");
+
+    // Animation state trackers
+    const prevCellState = new Map(); // key -> "wait"|"good"|"bad"
+    const prevTBState = new Map();   // name -> "wait"|"set"
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const next = text[i + 1];
+
+        if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+        if (ch === '"') { inQuotes = !inQuotes; continue; }
+
+        if (ch === "," && !inQuotes) { row.push(cur); cur = ""; continue; }
+        if ((ch === "\n" || ch === "\r") && !inQuotes) {
+          if (ch === "\r" && next === "\n") i++;
+          row.push(cur);
+          if (row.some(cell => String(cell).trim() !== "")) rows.push(row);
+          row = [];
+          cur = "";
+          continue;
+        }
+        cur += ch;
+      }
+      row.push(cur);
+      if (row.some(cell => String(cell).trim() !== "")) rows.push(row);
+
+      const maxLen = Math.max(0, ...rows.map(r => r.length));
+      return rows.map(r => r.concat(Array(Math.max(0, maxLen - r.length)).fill("")));
+    }
+
+    const clean = v => String(v ?? "").trim();
+
+    function toNumberLoose(v) {
+      const s = clean(v).replace(/[^0-9.-]/g, "");
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function isTrue(v){
+      const s = clean(v).toLowerCase();
+      return s === "true" || s === "yes" || s === "y" || s === "1";
+    }
+
+    function build(headers, resultsRow, dataRows){
+      const pickCols = [];
+      for (let c = PICKS_START_COL; c <= PICKS_END_COL; c++) pickCols.push(c);
+
+      // Awards only when every result cell B7:Q7 has a value
+      const awardsOn = (() => {
+        for (let c = PICKS_START_COL; c <= TIE_GUESS_COL; c++) { // B..Q
+          if (clean(resultsRow[c]) === "") return false;
+        }
+        return true;
+      })();
+
+      // Graded count ONLY B7:P7 (15)
+      let gradedCount = 0;
+      const gradedTotal = (PICKS_END_COL - PICKS_START_COL + 1); // 15
+      for (let c = PICKS_START_COL; c <= PICKS_END_COL; c++) { // B..P
+        if (clean(resultsRow[c]) !== "") gradedCount++;
+      }
+      elGraded.textContent = `Graded: ${gradedCount} / ${gradedTotal}`;
+      elGraded.title = "Does not include tiebreak";
+
+      const players = dataRows
+        .filter(r => clean(r[NAME_COL]) !== "")
+        .map(r => {
+          const name = clean(r[NAME_COL]);
+
+          const points = toNumberLoose(r[POINTS_COL]) ?? 0;
+          const tbdiffSort = toNumberLoose(r[TIEBREAK_DIFF_COL]) ?? 999999; // blanks go last
+          const dup = isTrue(r[DUP_COL]);
+
+          const picks = pickCols.map(c => {
+            const pick = clean(r[c]);
+            const ans  = clean(resultsRow[c]);
+            const pending = ans === "";
+            const correct = !pending && pick !== "" && pick.toLowerCase() === ans.toLowerCase();
+            return { pick, ans, pending, correct, colIndex: c };
+          });
+
+          const tbGuess = clean(r[TIE_GUESS_COL]);
+          const tbAns = clean(resultsRow[TIE_GUESS_COL]);
+          const tbPending = tbAns === "";
+          const tbDiffRaw = toNumberLoose(r[TIEBREAK_DIFF_COL]);
+
+          return { name, points, tbdiffSort, dup, picks, tbGuess, tbAns, tbPending, tbDiffRaw };
+        })
+        .sort((a,b) =>
+          (b.points - a.points) ||
+          (a.tbdiffSort - b.tbdiffSort) ||
+          a.name.localeCompare(b.name)
+        );
+
+      // Header
+      thead.innerHTML = "";
+      const trh = document.createElement("tr");
+
+      const thRank = document.createElement("th"); thRank.className="col-rank"; thRank.textContent="Rank"; trh.appendChild(thRank);
+      const thName = document.createElement("th"); thName.className="col-name"; thName.textContent="Name"; trh.appendChild(thName);
+      const thPts  = document.createElement("th"); thPts.className="col-points"; thPts.textContent="Points"; trh.appendChild(thPts);
+      const thTBd  = document.createElement("th"); thTBd.className="col-tb"; thTBd.textContent="Tiebreak Δ"; trh.appendChild(thTBd);
+
+      pickCols.forEach(c => {
+        const th = document.createElement("th");
+        th.textContent = clean(headers[c]) || `Q${c - PICKS_START_COL + 1}`;
+        trh.appendChild(th);
+      });
+
+      const thTBg = document.createElement("th");
+      thTBg.textContent = clean(headers[TIE_GUESS_COL]) || "Tiebreak Guess";
+      trh.appendChild(thTBg);
+
+      thead.appendChild(trh);
+
+      // Body
+      tbody.innerHTML = "";
+      const q = clean(elQ.value).toLowerCase();
+      const filtered = q ? players.filter(p => p.name.toLowerCase().includes(q)) : players;
+
+      // Golf-style ranks based on POINTS only: 1,2,2,4...
+      const ranks = [];
+      let lastPoints = null;
+      let lastRank = 0;
+      for (let i = 0; i < filtered.length; i++) {
+        const pts = filtered[i].points;
+        const rank = (i === 0) ? 1 : (pts === lastPoints ? lastRank : i + 1);
+        ranks.push(rank);
+        lastPoints = pts;
+        lastRank = rank;
+      }
+
+      filtered.forEach((p, idx) => {
+        const tr = document.createElement("tr");
+
+        // Highlight matching rows when searching
+        if (q && p.name.toLowerCase().includes(q)) tr.classList.add("match");
+
+        const rankNum = ranks[idx];
+
+        // Top 3 glow ONLY after awards are on (based on rank)
+        if (awardsOn) {
+          if (rankNum === 1) tr.classList.add("top1");
+          else if (rankNum === 2) tr.classList.add("top2");
+          else if (rankNum === 3) tr.classList.add("top3");
+        }
+
+        // detect if this rank is tied
+        const isTied = ranks.indexOf(rankNum) !== ranks.lastIndexOf(rankNum);
+
+        const tdRank = document.createElement("td");
+        tdRank.className = "col-rank";
+
+        let label;
+
+        // Medals ONLY after all results are in
+        if (awardsOn && rankNum <= 3) {
+          label =
+            rankNum === 1 ? "🥇" :
+            rankNum === 2 ? "🥈" :
+            "🥉";
+        } else {
+          label = isTied ? `T-${rankNum}` : String(rankNum);
+        }
+
+        tdRank.textContent = label;
+        tr.appendChild(tdRank);
+
+        const tdName = document.createElement("td");
+        tdName.className="col-name";
+        const nameWrap = document.createElement("div");
+        nameWrap.className = "name-wrap";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = p.name;
+        nameWrap.appendChild(nameSpan);
+
+        if (p.dup) {
+          const badge = document.createElement("span");
+          badge.className = "dup-badge";
+          badge.textContent = "Duplicate?";
+          badge.title = "This entry matches another entry (duplicate flag TRUE).";
+          nameWrap.appendChild(badge);
+        }
+        tdName.appendChild(nameWrap);
+        tr.appendChild(tdName);
+
+        const tdPts = document.createElement("td");
+        tdPts.className="col-points";
+        tdPts.textContent = String(p.points);
+        tr.appendChild(tdPts);
+
+        const tdTBd = document.createElement("td");
+        tdTBd.className="col-tb";
+        tdTBd.textContent = (p.tbdiffSort === 999999) ? "—" : String(p.tbdiffSort);
+        tr.appendChild(tdTBd);
+
+        // Picks
+        p.picks.forEach(cell => {
+          const td = document.createElement("td");
+          const span = document.createElement("span");
+
+          const state = cell.pending ? "wait" : (cell.correct ? "good" : "bad");
+          span.className = "cell " + state;
+
+          const key = `${p.name}|${cell.colIndex}`;
+          const prev = prevCellState.get(key);
+          if (prev === "wait" && state !== "wait") span.classList.add("reveal");
+          prevCellState.set(key, state);
+
+          span.textContent = cell.pick !== "" ? cell.pick : "—";
+          if (!cell.pending && cell.ans) span.title = "Result: " + cell.ans;
+
+          td.appendChild(span);
+          tr.appendChild(td);
+        });
+
+        // Tiebreak guess (Q)
+        const tdTBg = document.createElement("td");
+        const spanTB = document.createElement("span");
+        spanTB.className = "cell tb" + (p.tbPending ? " wait" : "");
+        spanTB.textContent = p.tbGuess !== "" ? p.tbGuess : "—";
+
+        const tbPrev = prevTBState.get(p.name);
+        const tbNow = p.tbPending ? "wait" : "set";
+        if (tbPrev === "wait" && tbNow === "set") spanTB.classList.add("reveal");
+        prevTBState.set(p.name, tbNow);
+
+        if (!p.tbPending && p.tbAns) {
+          const diffText = (p.tbDiffRaw === null || p.tbDiffRaw === undefined) ? "—" : p.tbDiffRaw;
+          spanTB.title = `Tiebreak Answer: ${p.tbAns} • Δ: ${diffText}`;
+        } else {
+          spanTB.title = "Tiebreak answer not set yet";
+        }
+
+        tdTBg.appendChild(spanTB);
+        tr.appendChild(tdTBg);
+
+        tbody.appendChild(tr);
+      });
+
+      elCounts.textContent = `${filtered.length} shown • ${players.length} total`;
+    }
+
+    function rerenderFromCache(){
+      if (!cachedRows.length) return;
+      const headerRow = cachedRows[0] || [];
+      const resultsIndex = RESULTS_ROW_NUMBER - 1;
+      const resultsRow = cachedRows[resultsIndex] || [];
+      const dataRows = cachedRows.slice(resultsIndex + 1); // rows 8+ in your sheet
+      build(headerRow, resultsRow, dataRows);
+    }
+
+    async function refresh(){
+      try{
+        elStatus.textContent = "Loading…";
+        const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const text = await res.text();
+        cachedRows = parseCSV(text);
+
+        rerenderFromCache();
+
+        const now = new Date();
+        elUpdated.textContent = "Updated: " + now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        elStatus.textContent = "Live";
+      } catch(err){
+        elStatus.textContent = "Couldn’t load";
+        console.error(err);
+      }
+    }
+
+    elQ.addEventListener("input", rerenderFromCache);
+
+    refresh();
+    setInterval(refresh, REFRESH_MS);
+  </script>
 </body>
 </html>
